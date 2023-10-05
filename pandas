@@ -1,0 +1,116 @@
+import pandas as pd
+import numpy as np 
+mydf = pd.read_csv('C:/Users/Shubham/Desktop/TelcoChurn2.csv')
+mydf.shape
+mydf.head(10)
+mydf.columns
+mydf.head()
+mydf.tail(10)
+mydf2 = mydf.drop(columns=['gender','Partner'])
+mydf2.head()
+len(mydf2)
+mydf2.shape
+mydf.iloc[:4, 5:9]
+mydf.loc[[2, 4, 6, 8], ['PhoneService','InternetService','Contract']]
+mydf.dtypes
+mydf.select_dtypes(include='float64')
+mydf['Churn'].value_counts()
+mydf['InternetService'].value_counts()
+mydf.info()
+type(mydf['Churn'])
+mydf2 = mydf[['TotalCharges','Churn']]
+mydf2
+random_column = np.random.randint(50, size=len(mydf))
+mydf.insert(10, 'random_col', random_column)
+mydf.head()
+mydf[['MonthlyCharges', 'TotalCharges']].cumsum()
+mydf.sample(n = 500)
+mydf['TotalCharges'].where(mydf['TotalCharges'] > 1000)
+mydf['TotalCharges'].where(mydf['TotalCharges'] > 1000, 0)
+mydf.InternetService.unique()
+mydf.InternetService.nunique()
+mydf.nunique()
+mydf['rank_tc'] = mydf["TotalCharges"].rank()
+mydf.head()
+x = mydf['TotalCharges'].min()
+print(x)
+mydf[mydf['TotalCharges'] == x]
+#filtering
+MYDF_DSL = mydf[mydf['InternetService'] == 'DSL']
+MYDF_DSL['InternetService'].value_counts()
+mydf2 = mydf[mydf['InternetService'].isin(['DSL','Fiber optic'])]
+mydf2['InternetService'].value_counts()
+mydf2.isnull().sum()
+mydf.head()
+mydf.loc[mydf['InternetService'] == 'DSL', 'Contract']
+mydf.iloc[9:25,2:5]
+mydf.iloc[0:3,1] = 'myvalue'
+mydf.head()
+mydf[(mydf['InternetService'] == 'DSL') | (mydf['gender'] == 'Male')].head()
+mydf[(mydf['tenure'] >= 2) & (mydf['tenure'] <= 40)].shape
+mydf.groupby(['Contract','PaymentMethod'])['MonthlyCharges'].agg(['sum','mean'])
+mydf.rename(columns = {"MonthlyCharges": "Monthly_Charges", "TotalCharges": "Total_Charges"})
+mydf.isnull().sum()
+#mydf['PhoneService'].fillna(0, inplace=True)
+pd.crosstab(mydf['Contract'], mydf['PaymentMethod'])
+pd.crosstab(mydf['Contract'], mydf['PaymentMethod'], 
+            margins = True,
+            margins_name="Total")
+pd.crosstab(mydf['Contract'], mydf['PaymentMethod'], 
+            margins = True,
+            margins_name="Total", normalize=True)
+pd.cut(mydf['MonthlyCharges'], bins = 4).value_counts()
+pd.cut(mydf['TotalCharges'], bins = 4).value_counts()
+df1 = pd.DataFrame({"city": ['A', 'B', 'C'],
+                   "day1": [22, 25, 21],
+                   'day2':[31, 12, 67],
+                   'day3': [27, 20, 15],
+                   'day4': [34, 37, [41, 45, 67, 90, 21]],
+                   'day5': [23, 54, 36]})
+df1
+df1.explode('day4').reset_index(drop=True)
+mydf.sort_values(['TotalCharges'], ascending = False)
+def myfunc(x):
+    if x > 2000:
+        return 'High'
+    else:
+        return 'Low'
+mydf['TC_bucket'] = mydf['TotalCharges'].apply(myfunc)
+mydf.head()
+capitalizer = lambda x: x.upper()
+mydf['Contract_Cap'] = mydf['Contract'].apply(capitalizer)
+mydf.head()
+#####################################################################
+table = pd.pivot_table(mydf,index=['gender','SeniorCitizen'],aggfunc={'tenure':np.mean,'TotalCharges':np.sum})
+table
+table = pd.pivot_table(mydf,index=['gender','SeniorCitizen'],values=['Churn'], aggfunc=np.mean)
+table
+table = pd.pivot_table(mydf,index=['SeniorCitizen'],columns=['Contract'],values=['Churn'],aggfunc=np.sum)
+table
+#joins
+import pandas as pd
+product=pd.DataFrame({
+    'Product_ID':[101,102,103,104,105,106,107],
+    'Product_name':['Watch','Bag','Shoes','Smartphone','Books','Oil','Laptop'],
+    'Category':['Fashion','Fashion','Fashion','Electronics','Study','Grocery','Electronics'],
+    'Price':[299.0,1350.50,2999.0,14999.0,145.0,110.0,79999.0],
+    'Seller_City':['Delhi','Mumbai','Chennai','Kolkata','Delhi','Chennai','Bengalore']
+})
+customer=pd.DataFrame({
+    'id':[1,2,3,4,5,6,7,8,9],
+    'name':['Olivia','Aditya','Cory','Isabell','Dominic','Tyler','Samuel','Daniel','Jeremy'],
+    'age':[20,25,15,10,30,65,35,18,23],
+    'Product_ID':[101,0,106,0,103,104,0,0,107],
+    'Purchased_Product':['Watch','NA','Oil','NA','Shoes','Smartphone','NA','NA','Laptop'],
+    'City':['Mumbai','Delhi','Bangalore','Chennai','Chennai','Delhi','Kolkata','Delhi','Mumbai']
+})
+product
+customer
+pd.merge(product,customer,on='Product_ID') #by default inner join
+pd.merge(product,customer,left_on='Product_name',right_on='Purchased_Product')
+pd.merge(product,customer,how='inner',left_on=['Product_ID','Seller_City'],right_on=['Product_ID','City'])
+pd.merge(product,customer,on='Product_ID',how='outer') #full outer join 
+pd.merge(product,customer,on='Product_ID',how='outer',indicator=True)
+pd.merge(product,customer,on='Product_ID',how='left') #left join
+pd.merge(product,customer,on='Product_ID',how='right') #right join
+
